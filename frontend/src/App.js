@@ -1,25 +1,29 @@
-import logo from './logo.svg';
-import './App.css';
+import CloudinaryUploadWidget from "./CloudinaryUploadWidget";
 
-function App() {
+import "./styles.css";
+
+export default function App() {
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
+      <h3>Cloudinary Upload Widget Example</h3>
+      <CloudinaryUploadWidget />
+      <p>
         <a
-          className="App-link"
-          href="https://reactjs.org"
+          href="https://cloudinary.com/documentation/upload_widget"
           target="_blank"
-          rel="noopener noreferrer"
         >
-          Learn React
+          Upload Widget User Guide
         </a>
-      </header>
+      </p>
+      <p>
+        <a
+          href="https://cloudinary.com/documentation/upload_widget_reference"
+          target="_blank"
+        >
+          Upload Widget Reference
+        </a>
+      </p>
+      <img id="uploadedimage" src=""></img>
     </div>
   );
 }
-
-export default App;
