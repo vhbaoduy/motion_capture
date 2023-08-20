@@ -29,7 +29,7 @@ class BodyMocap(object):
                     create_transl=False).to(self.device)
             self.use_smplx = True
         else:
-            smplModelPath = smpl_dir + '/basicModel_neutral_lbs_10_207_0_v1.0.0.pkl'
+            smplModelPath = smpl_dir + '/basicmodel_neutral_lbs_10_207_0_v1.1.0.pkl'
             self.smpl = SMPL(smplModelPath, batch_size=1, create_transl=False).to(self.device)
             self.use_smplx = False
             
