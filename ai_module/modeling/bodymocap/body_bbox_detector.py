@@ -22,7 +22,7 @@ from modeling.detectors.body_pose_estimator.val import normalize, pad_width
 from modeling.detectors.body_pose_estimator.modules.pose import Pose, track_poses
 from modeling.detectors.body_pose_estimator.modules.keypoints import extract_keypoints, group_keypoints
 ####
-from modeling.bodymocap.constants import PATH_TO_DATA
+import modeling.configs.path as pathconfig
 
 
 class BodyPoseEstimator(object):
@@ -42,7 +42,7 @@ class BodyPoseEstimator(object):
         """
         providers = ['CUDAExecutionProvider', 'CPUExecutionProvider'] if torch.cuda.is_available() else ['CPUExecutionProvider']
         # try to read non-encrypted onnx
-        path = os.path.join(PATH_TO_DATA, 'body_module/body_pose_estimator/human-pose-estimation-256x344.onnx')
+        path = os.path.join('body_module/body_pose_estimator/human-pose-estimation-256x344.onnx')
         session = onnxruntime.InferenceSession(path,
                                                providers=providers)
         self.input_names = [x.name for x in session.get_inputs()]
@@ -52,8 +52,7 @@ class BodyPoseEstimator(object):
 
     def __load_body_estimator(self):
         net = PoseEstimationWithMobileNet()
-        pose2d_checkpoint = "./modeling/extra_data/body_module/body_pose_estimator/checkpoint_iter_370000.pth"
-        checkpoint = torch.load(pose2d_checkpoint, map_location='cpu')
+        checkpoint = torch.load(pathconfig.DEFAULT_CHECKPOINT_PATH_POSE2D, map_location='cpu')
         load_state(net, checkpoint)
         net = net.eval()
         net = net.cuda()

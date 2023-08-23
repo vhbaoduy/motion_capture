@@ -13,11 +13,11 @@ from .image_utils import draw_raw_bbox, draw_hand_bbox, draw_body_bbox, draw_arm
 
 # To use screen_free visualizer. Either OpenDR or Pytorch3D should be installed.
 g_valid_visualize = False
-# try:
-#     from modeling.renderer.od_renderer import OpendrRenderer
-#     g_valid_visualize = True
-# except ImportError:
-#     print("Cannot import OpenDR Renderer")
+try:
+    from modeling.renderer.od_renderer import OpendrRenderer
+    g_valid_visualize = True
+except ImportError:
+    print("Cannot import OpenDR Renderer")
 try:
     from modeling.renderer.p3d_renderer import Pytorch3dRenderer
     g_valid_visualize = True

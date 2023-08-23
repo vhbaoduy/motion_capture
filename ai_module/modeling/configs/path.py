@@ -22,6 +22,8 @@ PATH_TO_DATA = os.path.join(WS_ROOT, 'modeling', 'extra_data')
 
 DEFAULT_CHECKPOINT_PATH_SMPL = "modeling/extra_data/body_module/pretrained_weights/2020_05_31-00_50_43-best-51.749683916568756.pt"
 DEFAULT_CHECKPOINT_PATH_SMPLX = "modeling/extra_data/body_module/pretrained_weights/smplx-03-28-46060-w_spin_mlc3d_46582-2089_2020_03_28-21_56_16.pt"
+DEFAULT_CHECKPOINT_PATH_POSE2D = "modeling/extra_data/body_module/body_pose_estimator/checkpoint_iter_370000.pth"
+SMPL_DIR = "/modeling/extra_data/smpl"
 
 TEMP_DIR = "tmp"
 SAVE_PATH = os.path.join(WS_ROOT, TEMP_DIR)
