@@ -9,7 +9,7 @@ import numpy as np
 import scipy.misc
 import cv2
 
-from bodymocap import constants
+from modeling.bodymocap import constants
 from torchvision.transforms import Normalize
 
 def get_transform(center, scale, res, rot=0):
