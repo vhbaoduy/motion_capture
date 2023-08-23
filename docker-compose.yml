@@ -1,0 +1,43 @@
+version: "3"
+services:
+  frontend:
+    build:
+      context: .
+      dockerfile: docker/dockerfile.frontend
+    ports:
+      - "3000:3000"
+    # volumes:
+    #   - ./frontend:/app
+    depends_on:
+     - backend
+
+  backend:
+    build:
+      context: .
+      dockerfile: docker/dockerfile.backend
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend:/app
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              device_ids: ['0']  # Use only GPU 0
+              capabilities: [gpu]
+
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=0  # Only use GPU 0
+      - NVIDIA_DRIVER_CAPABILITIES=compute,utility
+  
+  # ai_module:
+  #   build:
+  #     context: .
+  #     dockerfile: docker/dockerfile.ai_module  # Use the AI module Dockerfile
+  #   ports:
+  #     - "8080:8080"  # Adjust the port as needed
+  #   volumes:
+  #     - ./ai_module:/app  # Mount the AI module code
+  #   depends_on:
+  #     - backend  # Ensure the backend service is running before the AI module

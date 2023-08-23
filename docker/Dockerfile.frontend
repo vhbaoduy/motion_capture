@@ -13,8 +13,8 @@ RUN npm install --legacy-peer-deps
 # Copy the rest of the application code to the container
 COPY frontend/ ./
 
-# Build the frontend app
-# RUN npm run build
+Build the frontend app
+RUN npm run build
 
 # Expose port 3000 for the frontend
 EXPOSE 3000
