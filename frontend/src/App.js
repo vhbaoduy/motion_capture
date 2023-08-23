@@ -3,9 +3,8 @@ import React, { Component } from 'react';
 import Wrapper from './components/Wrapper';
 import NavBar from './components/NavBar';
 import ReactPlayer from 'react-player';
-// import myVideo from './demo/demo.mp4';
 import axios from "axios";
-import { getNativeSelectUtilityClasses } from '@mui/material';
+// import { getNativeSelectUtilityClasses } from '@mui/material';
 
 
 class App extends Component {
@@ -65,9 +64,6 @@ class App extends Component {
   }
 
 
-
-
-
 	render() {
 
     const handleUploadButtonClick = () => {
@@ -75,7 +71,7 @@ class App extends Component {
     };
 
     const handleConvertButtonClick = async () => {
-      if (this.state.selectedFile == undefined) {
+      if (this.state.selectedFile === undefined) {
         alert("Please upload a file first!");
       }
       else {
@@ -84,7 +80,7 @@ class App extends Component {
           await formData.append("video_file", this.state.selectedFile)
           console.log(formData)
           await axios({
-            url:'54.70.121.78:8000/video',
+            url:'http://54.70.121.78:8000/video',
             method: "POST",
             data:formData,
             headers:{

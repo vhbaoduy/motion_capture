@@ -8,7 +8,7 @@ from tempfile import NamedTemporaryFile, TemporaryDirectory
 from fastapi import FastAPI, File, UploadFile
 from fastapi.responses import FileResponse, PlainTextResponse
 from starlette.middleware.cors import CORSMiddleware
-import backend.config as pathconfig
+import config as pathconfig
 
 app = FastAPI()
 app.add_middleware(
