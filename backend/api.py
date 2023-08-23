@@ -10,7 +10,6 @@ from fastapi.responses import FileResponse, PlainTextResponse
 from starlette.middleware.cors import CORSMiddleware
 import backend.config as pathconfig
 
-
 app = FastAPI()
 app.add_middleware(
     CORSMiddleware,
