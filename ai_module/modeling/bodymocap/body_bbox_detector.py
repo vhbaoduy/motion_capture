@@ -8,6 +8,7 @@ import cv2
 
 import torch
 import torchvision.transforms as transforms
+import onnxruntime
 # from PIL import Image
 
 # Code from https://github.com/Daniil-Osokin/lightweight-human-pose-estimation.pytorch/blob/master/demo.py
@@ -15,11 +16,13 @@ import torchvision.transforms as transforms
 # 2D body pose estimator
 pose2d_estimator_path = './detectors/body_pose_estimator'
 sys.path.append(pose2d_estimator_path)
-from detectors.body_pose_estimator.pose2d_models.with_mobilenet import PoseEstimationWithMobileNet
-from detectors.body_pose_estimator.modules.load_state import load_state
-from detectors.body_pose_estimator.val import normalize, pad_width
-from detectors.body_pose_estimator.modules.pose import Pose, track_poses
-from detectors.body_pose_estimator.modules.keypoints import extract_keypoints, group_keypoints
+from modeling.detectors.body_pose_estimator.pose2d_models.with_mobilenet import PoseEstimationWithMobileNet
+from modeling.detectors.body_pose_estimator.modules.load_state import load_state
+from modeling.detectors.body_pose_estimator.val import normalize, pad_width
+from modeling.detectors.body_pose_estimator.modules.pose import Pose, track_poses
+from modeling.detectors.body_pose_estimator.modules.keypoints import extract_keypoints, group_keypoints
+####
+from modeling.bodymocap.constants import PATH_TO_DATA
 
 
 class BodyPoseEstimator(object):
@@ -30,11 +33,26 @@ class BodyPoseEstimator(object):
     def __init__(self):
         print("Loading Body Pose Estimator")
         self.__load_body_estimator()
-    
+        # self.__init_session()
+        
+        
+    def __init_session(self):
+        """
+            Init inference session
+        """
+        providers = ['CUDAExecutionProvider', 'CPUExecutionProvider'] if torch.cuda.is_available() else ['CPUExecutionProvider']
+        # try to read non-encrypted onnx
+        path = os.path.join(PATH_TO_DATA, 'body_module/body_pose_estimator/human-pose-estimation-256x344.onnx')
+        session = onnxruntime.InferenceSession(path,
+                                               providers=providers)
+        self.input_names = [x.name for x in session.get_inputs()]
+        self.output_names = [x.name for x in session.get_outputs()]
+        self.session = session
+            
 
     def __load_body_estimator(self):
         net = PoseEstimationWithMobileNet()
-        pose2d_checkpoint = "./extra_data/body_module/body_pose_estimator/checkpoint_iter_370000.pth"
+        pose2d_checkpoint = "./modeling/extra_data/body_module/body_pose_estimator/checkpoint_iter_370000.pth"
         checkpoint = torch.load(pose2d_checkpoint, map_location='cpu')
         load_state(net, checkpoint)
         net = net.eval()
@@ -51,20 +69,32 @@ class BodyPoseEstimator(object):
         scaled_img = cv2.resize(img, (0, 0), fx=scale, fy=scale, interpolation=cv2.INTER_CUBIC)
         scaled_img = normalize(scaled_img, img_mean, img_scale)
         min_dims = [input_height_size, max(scaled_img.shape[1], input_height_size)]
+        
         padded_img, pad = pad_width(scaled_img, stride, pad_value, min_dims)
-
+                
         tensor_img = torch.from_numpy(padded_img).permute(2, 0, 1).unsqueeze(0).float()
+        # tensor_img = torch.cat((tensor_img, tensor_img), dim=0)
+        # processed_image = tensor_img.numpy()
+        # print(tensor_img.shape)
+        # print(processed_image.shape)
         if not cpu:
             tensor_img = tensor_img.cuda()
 
         stages_output = self.model(tensor_img)
-
+        # stages_output = self.session.run(self.output_names,
+        #                                  {self.input_names[0]: processed_image})
+        
+        # print(stages_output)
         stage2_heatmaps = stages_output[-2]
         heatmaps = np.transpose(stage2_heatmaps.squeeze().cpu().data.numpy(), (1, 2, 0))
+
+        # heatmaps = np.transpose(np.squeeze(stage2_heatmaps,0), (1, 2, 0))
         heatmaps = cv2.resize(heatmaps, (0, 0), fx=upsample_ratio, fy=upsample_ratio, interpolation=cv2.INTER_CUBIC)
 
         stage2_pafs = stages_output[-1]
         pafs = np.transpose(stage2_pafs.squeeze().cpu().data.numpy(), (1, 2, 0))
+
+        # pafs = np.transpose(np.squeeze(stage2_pafs,0), (1, 2, 0))
         pafs = cv2.resize(pafs, (0, 0), fx=upsample_ratio, fy=upsample_ratio, interpolation=cv2.INTER_CUBIC)
 
         return heatmaps, pafs, scale, pad

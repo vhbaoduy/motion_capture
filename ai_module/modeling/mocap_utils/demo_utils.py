@@ -4,7 +4,7 @@ import os, sys, shutil
 import os.path as osp
 import cv2
 from collections import OrderedDict
-import mocap_utils.general_utils as gnu
+import modeling.mocap_utils.general_utils as gnu
 import numpy as np
 import json
 import subprocess as sp
