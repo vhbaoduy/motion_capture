@@ -1,8 +1,10 @@
-import axios from 'axios';
 import Button from '@mui/material/Button';
 import React, { Component } from 'react';
 import Wrapper from './components/Wrapper';
 import NavBar from './components/NavBar';
+import ReactPlayer from 'react-player';
+import myVideo from './demo/demo.mp4';
+
 
 class App extends Component {
 
@@ -20,26 +22,6 @@ class App extends Component {
 
 	};
 
-	// On file upload (click the upload button)
-	onFileUpload = () => {
-
-		// Create an object of formData
-		const formData = new FormData();
-
-		// Update the formData object
-		formData.append(
-			"myFile",
-			this.state.selectedFile,
-			this.state.selectedFile.name
-		);
-
-		// Details of the uploaded file
-		console.log(this.state.selectedFile);
-
-		// Request made to the backend api
-		// Send formData object
-		axios.post("api/uploadfile", formData);
-	};
 
 	// File content to be displayed after
 	// file upload is complete
@@ -48,21 +30,37 @@ class App extends Component {
 		if (this.state.selectedFile) {
 
 			return (
-				<div>
-					<h2>File Details:</h2>
-					<p>File Name: {this.state.selectedFile.name}</p>
-
-					<p>File Type: {this.state.selectedFile.type}</p>
-
-					<p>
-						Last Modified:{" "}
-						{this.state.selectedFile.lastModifiedDate.toDateString()}
-					</p>
-
-				</div>
+        <div class="video-wrapper">
+					<ReactPlayer
+            url= {myVideo}
+            width="640px"
+            height="360px"
+            controls={true}
+          />
+        </div>
 			);
 		}
 	};
+
+  outputData = () => {
+    if (this.state.selectedFile) {
+      return (
+        <Wrapper className="second-box">
+      <div>
+      <h1 id="heading">
+        Output
+      </h1>
+          {this.fileData()}
+        <div>
+        <Button variant="contained" color='info'>Download</Button>{' '}
+        </div>
+      </div>
+      </Wrapper>
+      )
+    }
+  }
+
+
 
 
 
@@ -72,10 +70,20 @@ class App extends Component {
       document.getElementById('fileInput').click();
     };
 
+    const handleConvertButtonClick = () => {
+      if (this.state.selectedFile == undefined) {
+        alert("Please upload a file first!");
+      }
+      else {
+
+      }
+    };
+
 		return (
       <div>
       <NavBar></NavBar>
-      <Wrapper>
+      <div class="box">
+      <Wrapper class="first-box">
       <div>
       <h1 id="heading">
         3D Pose Estimation
@@ -93,12 +101,31 @@ class App extends Component {
                 onChange={this.onFileChange}>
 
         </input>
+        <Button variant="contained" color='secondary' onClick={handleConvertButtonClick}>
+          Convert
+        </Button>{' '}
         
         </div>
           {this.fileData()}
         </div>
       </Wrapper>
+
+      <Wrapper class="second-box" style="display: none">
+      <div>
+      <h1 id="heading">
+        Output
+      </h1>
+          {this.fileData()}
+        <div>
+        <Button variant="contained" color='info'>Download</Button>{' '}
+        </div>
       </div>
+      </Wrapper>
+      </div>
+
+      
+      </div>
+
 		);
 	}
 }
