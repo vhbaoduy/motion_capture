@@ -1,0 +1,8 @@
+iglovikov_helper_functions
+people_segmentation
+mmcv-full -f https://download.openmmlab.com/mmcv/dist/cu101/torch1.5/index.html
+pytorch==1.5.1 torchvision==0.6.1 cudatoolkit=10.1 -c pytorch
+tensorboard 
+matplotlib 
+scikit-image==0.16.2
+tqdm 
