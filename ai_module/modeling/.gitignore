@@ -23,7 +23,6 @@ samples/
 *.pth
 *.obj
 data/
-detectors/
 data
 samples_all/
 *.zip

@@ -1,5 +1,3 @@
-# Copyright (c) Facebook, Inc. and its affiliates.
-
 import os
 import sys
 import os.path as osp
@@ -20,7 +18,30 @@ import modeling.mocap_utils.general_utils as gnu
 from modeling.mocap_utils.timer import Timer
 
 import modeling.renderer.image_utils as imu
-from modeling.renderer.viewer2D import ImShow
+from queue import Queue
+import threading 
+
+class Inference:
+    """
+        Estimate pose and Render
+    """
+    def __init__(self):
+        pass
+        self.queue = Queue()
+        
+        
+    def start(self):
+        self.thread = threading.Thread(target=self.run,
+                                       daemon=True,
+                                       name="Receiver data")
+    
+    def run(self):
+        while True:
+            try:
+                data = self.queue.get()
+            except:
+                pass
+            
 
 def run_body_mocap(args, body_bbox_detector, body_mocap, visualizer):
     #Setup input data to handle different types of inputs
@@ -172,7 +193,3 @@ def main():
     visualizer = Visualizer(args.renderer_type)
   
     run_body_mocap(args, body_bbox_detector, body_mocap, visualizer)
-
-
-if __name__ == '__main__':
-    main()

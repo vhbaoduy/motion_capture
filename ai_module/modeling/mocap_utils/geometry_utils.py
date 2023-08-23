@@ -8,7 +8,7 @@ import torch
 from torch.nn import functional as F
 import cv2
 import numpy.matlib as npm
-import mocap_utils.geometry_utils_torch as gut
+import modeling.mocap_utils.geometry_utils_torch as gut
 
 
 def flip_hand_pose(pose):

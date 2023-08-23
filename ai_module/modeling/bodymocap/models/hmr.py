@@ -7,7 +7,7 @@ import numpy as np
 import math
 
 import sys
-from bodymocap.utils.geometry import rot6d_to_rotmat
+from modeling.bodymocap.utils.geometry import rot6d_to_rotmat
 
 class Bottleneck(nn.Module):
     """ Redefinition of Bottleneck residual block
