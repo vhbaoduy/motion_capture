@@ -1,6 +1,7 @@
 import os
 import cv2
 import sys
+import shutil
 import time
 import argparse
 import numpy as np
@@ -23,7 +24,7 @@ def process_video(args, video_path, frames_path):
     frame_rate = args.frame_rate  # Desired frame rate in frames per second
     frame_interval = 1.0 / frame_rate
 
-    frame_count = 0
+    frame_count, true_frame_count = 0, 0
     start_time = time.time()
 
     while True:
@@ -33,9 +34,10 @@ def process_video(args, video_path, frames_path):
 
         current_time = time.time()
         elapsed_time = current_time - start_time
+        true_frame_count += 1
 
         # Check if it's time to capture the next frame
-        if elapsed_time >= frame_interval:
+        if true_frame_count % frame_rate == 0:
             frame_count += 1
             frame_filename = os.path.join(frames_path, f'frame_{str(frame_count).zfill(4)}.jpg')
             cv2.imwrite(frame_filename, frame)
@@ -85,10 +87,11 @@ def human_segmentation(args):
 
 
 def video_inpainting(args):
-    subprocess.call(['python', 'test.py', '--model', 'e2fgvi', '--video', \
+    subprocess.call(['python', 'video_inpainting/test.py', '--model', 'e2fgvi', '--video', \
                     f'{args.frames_path}', '--mask', f'{args.masks_path}', \
                     '--ckpt', f'{args.saved_model}', '--savefps', f'{args.savefps}', \
                     '--neighbor_stride', f'{args.neighbor_stride}'])
+    shutil.copy("results/_results.mp4", os.path.join(args.frames_path, "..", "bg_removal.mp4"))
 
 def main(args):
     human_segmentation(args)

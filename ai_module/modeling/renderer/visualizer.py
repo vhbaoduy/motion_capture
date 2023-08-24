@@ -111,7 +111,7 @@ class Visualizer(object):
         # render predicted meshes
         if pred_mesh_list is not None:
             # TODO: Replace input -> background img
-            rend_img = self.__render_pred_verts(input_img, pred_mesh_list)
+            rend_img = self.__render_pred_verts(np.zeros_like(input_img), pred_mesh_list)
             if rend_img is not None:
                 # res_img = np.concatenate((res_img, rend_img), axis=1)
                 res_img = rend_img

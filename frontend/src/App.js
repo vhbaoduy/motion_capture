@@ -84,7 +84,7 @@ class App extends Component {
           await formData.append("video_file", this.state.selectedFile)
           console.log(formData)
           await axios({
-            url:'54.70.121.78:8000/video',
+            url:'http://localhost:8000/video',
             method: "POST",
             data:formData,
             headers:{
