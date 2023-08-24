@@ -188,7 +188,7 @@ def main_worker():
     if not os.path.exists(save_dir_name):
         os.makedirs(save_dir_name)
     save_path = os.path.join(save_dir_name, save_name)
-    writer = cv2.VideoWriter(save_path, cv2.VideoWriter_fourcc(*"mp4v"),
+    writer = cv2.VideoWriter(save_path, cv2.VideoWriter_fourcc(*"avc1"),
                              default_fps, size)
     for f in range(video_length):
         comp = comp_frames[f].astype(np.uint8)

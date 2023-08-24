@@ -6,6 +6,7 @@ import ReactPlayer from 'react-player';
 // import myVideo from './demo/demo.mp4';
 import axios from "axios";
 import { getNativeSelectUtilityClasses } from '@mui/material';
+import Configs from './config';
 
 
 class App extends Component {
@@ -84,7 +85,7 @@ class App extends Component {
           await formData.append("video_file", this.state.selectedFile)
           console.log(formData)
           await axios({
-            url:'http://localhost:8000/video',
+            url: Configs.API_URL + "/video",
             method: "POST",
             data:formData,
             headers:{
@@ -92,7 +93,7 @@ class App extends Component {
             },
             responseType: 'blob',
           }).then(async (res) => {
-            console.log(res)
+            // console.log(res)
             // const blob = await res.blob()
             // const dataBlob = new Blob([res.data], {type:"video/mp4"})
             // const blobURL = URL.createObjectURL(dataBlob)

@@ -55,7 +55,7 @@ function Navbar() {
               textDecoration: 'none',
             }}
           >
-            Wonder Motion
+            Magic Motion
           </Typography>
 
           <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>

@@ -59,9 +59,11 @@ def read_video_into_frames(video_path):
 async def motion_capture_in_video(video_file: UploadFile = File(...)):
     input_temp_dir = TemporaryDirectory()
     output_temp_dir = pathconfig.TEMP_PATH
-    os.makedirs(output_temp_dir, exist_ok=True)
+    if os.path.exists(output_temp_dir):
+        shutil.rmtree(output_temp_dir)
+        os.makedirs(output_temp_dir)
     # print(video_file)
-    # print(input_temp_dir)
+
     try:
         contents = video_file.file.read()
         with open(os.path.join(input_temp_dir.name, "input.mp4"), "wb+") as f:
@@ -97,7 +99,7 @@ async def motion_capture_in_video(video_file: UploadFile = File(...)):
         return "There was an error processing the file"
 
     # Merging two tasks
-    modeling_frames = read_video_into_frames(os.path.join(input_temp_dir.name, "input.mp4"))
+    modeling_frames = read_video_into_frames(os.path.join(output_temp_dir, "input.mp4"))
     bg_frames = read_video_into_frames(os.path.join(output_temp_dir, "bg_removal.mp4"))
     # There are less background frames than video frames
     stride = len(modeling_frames) // len(bg_frames)
@@ -116,22 +118,19 @@ async def motion_capture_in_video(video_file: UploadFile = File(...)):
         output_frames.append(output_frame)
 
     # Write video
-    out_video = cv2.VideoWriter(
-        os.path.join(output_temp_dir, "output.mp4"),
-        cv2.VideoWriter_fourcc(*"mp4v"),
-        25,
-        (modeling_frames[0].shape[1], modeling_frames[0].shape[0]),
-    )
-    for output_frame in output_frames:
-        out_video.write(output_frame)
-    out_video.release()
+    output_frame_dir = os.path.join(output_temp_dir, "output_frames")
+    os.makedirs(output_frame_dir, exist_ok=True)
+    for fi, output_frame in enumerate(output_frames):
+        cv2.imwrite(os.path.join(output_frame_dir, f"{fi:03d}.jpg"), output_frame)
+    out_path = os.path.join(output_temp_dir, "output.mp4")
+    ffmpeg_cmd = f'ffmpeg -y -f image2 -framerate 25 -pattern_type glob -i "{output_frame_dir}/*.jpg"  -pix_fmt yuv420p -c:v libx264 -x264opts keyint=25:min-keyint=25:scenecut=-1 -vf "scale=trunc(iw/2)*2:trunc(ih/2)*2" {out_path}'
+    os.system(ffmpeg_cmd)
 
     # Return
-    if os.path.exists(os.path.join(output_temp_dir, "output.mp4")):
+    if os.path.exists(out_path):
         return FileResponse(
-            path=os.path.join(output_temp_dir, "output.mp4"),
+            path=out_path,
             filename="output.mp4",
             media_type="video/mp4",
         )
-    os.system("rm -rf {}".format(output_temp_dir))
     return "There was an error writing the file"

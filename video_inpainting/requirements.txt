@@ -5,4 +5,5 @@ pytorch==1.5.1 torchvision==0.6.1 cudatoolkit=10.1 -c pytorch
 tensorboard 
 matplotlib 
 scikit-image==0.16.2
-tqdm 
+tqdm
+albumentations
